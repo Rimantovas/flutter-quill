@@ -155,7 +155,7 @@ class TextLine extends StatelessWidget {
       toMerge = defaultStyles.code!.style;
     } else if (block == Attribute.list) {
       toMerge = defaultStyles.lists!.style;
-    } else if (block == Attribute.fact_check) {
+    } else if ((block?.key ?? '') == Attribute.fact_check.key) {
       toMerge = defaultStyles.fact_check!.style;
     }
 
