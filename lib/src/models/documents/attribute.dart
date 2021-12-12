@@ -81,7 +81,7 @@ class Attribute<T> {
 
   static final WidthAttribute width = WidthAttribute(null);
 
-  static final FactAttribute fact_check = FactAttribute(null);
+  static final FactAttribute fact_check = FactAttribute('grey');
 
   static final HeightAttribute height = HeightAttribute(null);
 
@@ -310,8 +310,8 @@ class WidthAttribute extends Attribute<String?> {
   WidthAttribute(String? val) : super('width', AttributeScope.IGNORE, val);
 }
 
-class FactAttribute extends Attribute<String?> {
-  FactAttribute(String? val) : super('fact_check', AttributeScope.BLOCK, val);
+class FactAttribute extends Attribute<String> {
+  FactAttribute(String val) : super('fact_check', AttributeScope.BLOCK, val);
 }
 
 class HeightAttribute extends Attribute<String?> {
