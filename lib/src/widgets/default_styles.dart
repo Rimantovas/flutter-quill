@@ -62,6 +62,7 @@ class DefaultStyles {
     this.h2,
     this.h3,
     this.paragraph,
+    this.fact_check,
     this.bold,
     this.italic,
     this.small,
@@ -86,6 +87,7 @@ class DefaultStyles {
   final DefaultTextBlockStyle? h2;
   final DefaultTextBlockStyle? h3;
   final DefaultTextBlockStyle? paragraph;
+  final DefaultTextBlockStyle? fact_check;
   final TextStyle? bold;
   final TextStyle? italic;
   final TextStyle? small;
@@ -162,6 +164,21 @@ class DefaultStyles {
             null),
         paragraph: DefaultTextBlockStyle(
             baseStyle, const Tuple2(0, 0), const Tuple2(0, 0), null),
+        fact_check: DefaultTextBlockStyle(
+          defaultTextStyle.style.copyWith(
+            fontSize: 20,
+            color: defaultTextStyle.style.color!.withOpacity(0.70),
+            height: 1.25,
+            fontWeight: FontWeight.w500,
+          ),
+          const Tuple2(8, 0),
+          const Tuple2(0, 0),
+          const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.red, Colors.green],
+            ),
+          ),
+        ),
         bold: const TextStyle(fontWeight: FontWeight.bold),
         italic: const TextStyle(fontStyle: FontStyle.italic),
         small: const TextStyle(fontSize: 12, color: Colors.black45),

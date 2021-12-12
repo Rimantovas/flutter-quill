@@ -40,6 +40,7 @@ class Attribute<T> {
     Attribute.style.key: Attribute.style,
     Attribute.token.key: Attribute.token,
     Attribute.script.key: Attribute.script,
+    Attribute.fact_check.key: Attribute.fact_check,
   });
 
   static final BoldAttribute bold = BoldAttribute();
@@ -79,6 +80,8 @@ class Attribute<T> {
   static final BlockQuoteAttribute blockQuote = BlockQuoteAttribute();
 
   static final WidthAttribute width = WidthAttribute(null);
+
+  static final FactAttribute fact_check = FactAttribute();
 
   static final HeightAttribute height = HeightAttribute(null);
 
@@ -302,6 +305,10 @@ class BlockQuoteAttribute extends Attribute<bool> {
 
 class WidthAttribute extends Attribute<String?> {
   WidthAttribute(String? val) : super('width', AttributeScope.IGNORE, val);
+}
+
+class FactAttribute extends Attribute<bool> {
+  FactAttribute() : super('fact_check', AttributeScope.BLOCK, true);
 }
 
 class HeightAttribute extends Attribute<String?> {
