@@ -88,7 +88,7 @@ class EditableTextBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
 
-    final defaultStyles = QuillStyles.getStyles(context, false);
+    final defaultStyles = styles ?? QuillStyles.getStyles(context, false);
     return _EditableBlock(
         block,
         textDirection,
