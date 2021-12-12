@@ -90,36 +90,39 @@ class _SelectAlignmentButtonState extends State<SelectAlignmentButton> {
               width: widget.iconSize * kIconButtonFactor,
               height: widget.iconSize * kIconButtonFactor,
             ),
-            child: RawMaterialButton(
-              hoverElevation: 0,
-              highlightElevation: 0,
-              elevation: 0,
-              visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(2)),
-              fillColor: _valueToText[_value] == _valueString[index]
-                  ? (widget.iconTheme?.iconSelectedFillColor ??
-                      theme.toggleableActiveColor)
-                  : (widget.iconTheme?.iconUnselectedFillColor ??
-                      theme.canvasColor),
-              onPressed: () => _valueAttribute[index] == Attribute.leftAlignment
-                  ? widget.controller
-                      .formatSelection(Attribute.clone(Attribute.align, null))
-                  : widget.controller.formatSelection(_valueAttribute[index]),
-              child: Icon(
-                _valueString[index] == Attribute.leftAlignment.value
-                    ? Icons.format_align_left
-                    : _valueString[index] == Attribute.centerAlignment.value
-                        ? Icons.format_align_center
-                        : _valueString[index] == Attribute.rightAlignment.value
-                            ? Icons.format_align_right
-                            : Icons.format_align_justify,
-                size: widget.iconSize,
-                color: _valueToText[_value] == _valueString[index]
-                    ? (widget.iconTheme?.iconSelectedColor ??
-                        theme.primaryIconTheme.color)
-                    : (widget.iconTheme?.iconUnselectedColor ??
-                        theme.iconTheme.color),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: _valueToText[_value] == _valueString[index]
+                    ? (widget.iconTheme?.iconSelectedFillColor)
+                    : (widget.iconTheme?.iconUnselectedFillColor),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: RawMaterialButton(
+                hoverElevation: 0,
+                highlightElevation: 0,
+                elevation: 0,
+                visualDensity: VisualDensity.compact,
+                onPressed: () => _valueAttribute[index] ==
+                        Attribute.leftAlignment
+                    ? widget.controller
+                        .formatSelection(Attribute.clone(Attribute.align, null))
+                    : widget.controller.formatSelection(_valueAttribute[index]),
+                child: Icon(
+                  _valueString[index] == Attribute.leftAlignment.value
+                      ? Icons.format_align_left
+                      : _valueString[index] == Attribute.centerAlignment.value
+                          ? Icons.format_align_center
+                          : _valueString[index] ==
+                                  Attribute.rightAlignment.value
+                              ? Icons.format_align_right
+                              : Icons.format_align_justify,
+                  size: widget.iconSize,
+                  color: _valueToText[_value] == _valueString[index]
+                      ? (widget.iconTheme?.iconSelectedColor ??
+                          theme.primaryIconTheme.color)
+                      : (widget.iconTheme?.iconUnselectedColor ??
+                          theme.iconTheme.color),
+                ),
               ),
             ),
           ),

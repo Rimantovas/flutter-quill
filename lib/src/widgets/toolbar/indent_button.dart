@@ -30,8 +30,7 @@ class _IndentButtonState extends State<IndentButton> {
 
     final iconColor =
         widget.iconTheme?.iconUnselectedColor ?? theme.iconTheme.color;
-    final iconFillColor =
-        widget.iconTheme?.iconUnselectedFillColor ?? theme.canvasColor;
+    final iconFillColor = widget.iconTheme?.iconUnselectedFillColor;
     return QuillIconButton(
       highlightElevation: 0,
       hoverElevation: 0,

@@ -48,8 +48,7 @@ class ImageButton extends StatelessWidget {
     final theme = Theme.of(context);
 
     final iconColor = iconTheme?.iconUnselectedColor ?? theme.iconTheme.color;
-    final iconFillColor =
-        iconTheme?.iconUnselectedFillColor ?? (fillColor ?? theme.canvasColor);
+    final iconFillColor = iconTheme?.iconUnselectedFillColor;
 
     return QuillIconButton(
       icon: Icon(icon, size: iconSize, color: iconColor),

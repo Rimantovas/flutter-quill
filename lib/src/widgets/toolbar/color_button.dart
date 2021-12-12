@@ -110,7 +110,7 @@ class _ColorButtonState extends State<ColorButton> {
 
     final fillColor = _isToggledColor && !widget.background && _isWhite
         ? stringToColor('#ffffff')
-        : (widget.iconTheme?.iconUnselectedFillColor ?? theme.canvasColor);
+        : (widget.iconTheme?.iconUnselectedFillColor);
     final fillColorBackground =
         _isToggledBackground && widget.background && _isWhitebackground
             ? stringToColor('#ffffff')
@@ -123,7 +123,7 @@ class _ColorButtonState extends State<ColorButton> {
       icon: Icon(widget.icon,
           size: widget.iconSize,
           color: widget.background ? iconColorBackground : iconColor),
-      fillColor: widget.background ? fillColorBackground : fillColor,
+      fillColor: widget.iconTheme?.iconUnselectedFillColor,
       onPressed: _showColorPicker,
     );
   }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class QuillIconTheme {
-  const QuillIconTheme(
-      {this.iconSelectedColor,
-      this.iconUnselectedColor,
-      this.iconSelectedFillColor,
-      this.iconUnselectedFillColor,
-      this.disabledIconColor,
-      this.disabledIconFillColor,
-      this.gradient});
+  const QuillIconTheme({
+    this.iconSelectedColor,
+    this.iconUnselectedColor,
+    this.iconSelectedFillColor,
+    this.iconUnselectedFillColor,
+    this.disabledIconColor,
+    this.disabledIconFillColor,
+  });
 
   ///The color to use for selected icons in the toolbar
   final Color? iconSelectedColor;
@@ -17,17 +17,14 @@ class QuillIconTheme {
   final Color? iconUnselectedColor;
 
   ///The fill color to use for the selected icons in the toolbar
-  final Color? iconSelectedFillColor;
+  final LinearGradient? iconSelectedFillColor;
 
   ///The fill color to use for the unselected icons in the toolbar
-  final Color? iconUnselectedFillColor;
+  final LinearGradient? iconUnselectedFillColor;
 
   ///The color to use for disabled icons in the toolbar
   final Color? disabledIconColor;
 
   ///The fill color to use for disabled icons in the toolbar
   final Color? disabledIconFillColor;
-
-  ///The gradient to use for selected icons in the toolbar
-  final LinearGradient? gradient;
 }

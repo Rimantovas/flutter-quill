@@ -73,28 +73,31 @@ class _SelectHeaderStyleButtonState extends State<SelectHeaderStyleButton> {
               width: widget.iconSize * kIconButtonFactor,
               height: widget.iconSize * kIconButtonFactor,
             ),
-            child: RawMaterialButton(
-              hoverElevation: 0,
-              highlightElevation: 0,
-              elevation: 0,
-              visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(2)),
-              fillColor: _valueToText[_value] == _valueString[index]
-                  ? (widget.iconTheme?.iconSelectedFillColor ??
-                      theme.toggleableActiveColor)
-                  : (widget.iconTheme?.iconUnselectedFillColor ??
-                      theme.canvasColor),
-              onPressed: () =>
-                  widget.controller.formatSelection(_valueAttribute[index]),
-              child: Text(
-                _valueString[index],
-                style: style.copyWith(
-                  color: _valueToText[_value] == _valueString[index]
-                      ? (widget.iconTheme?.iconSelectedColor ??
-                          theme.primaryIconTheme.color)
-                      : (widget.iconTheme?.iconUnselectedColor ??
-                          theme.iconTheme.color),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: _valueToText[_value] == _valueString[index]
+                    ? (widget.iconTheme?.iconSelectedFillColor)
+                    : (widget.iconTheme?.iconUnselectedFillColor),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: RawMaterialButton(
+                hoverElevation: 0,
+                highlightElevation: 0,
+                elevation: 0,
+                visualDensity: VisualDensity.compact,
+                // shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(2)),
+                onPressed: () =>
+                    widget.controller.formatSelection(_valueAttribute[index]),
+                child: Text(
+                  _valueString[index],
+                  style: style.copyWith(
+                    color: _valueToText[_value] == _valueString[index]
+                        ? (widget.iconTheme?.iconSelectedColor ??
+                            theme.primaryIconTheme.color)
+                        : (widget.iconTheme?.iconUnselectedColor ??
+                            theme.iconTheme.color),
+                  ),
                 ),
               ),
             ),

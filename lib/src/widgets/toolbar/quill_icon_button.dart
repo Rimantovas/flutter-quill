@@ -14,7 +14,7 @@ class QuillIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget? icon;
   final double size;
-  final Color? fillColor;
+  final LinearGradient? fillColor;
   final double hoverElevation;
   final double highlightElevation;
 
@@ -22,15 +22,19 @@ class QuillIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: size, height: size),
-      child: RawMaterialButton(
-        visualDensity: VisualDensity.compact,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-        fillColor: fillColor,
-        elevation: 0,
-        hoverElevation: hoverElevation,
-        highlightElevation: hoverElevation,
-        onPressed: onPressed,
-        child: icon,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: fillColor,
+          borderRadius: BorderRadius.circular(2),
+        ),
+        child: RawMaterialButton(
+          visualDensity: VisualDensity.compact,
+          elevation: 0,
+          hoverElevation: hoverElevation,
+          highlightElevation: hoverElevation,
+          onPressed: onPressed,
+          child: icon,
+        ),
       ),
     );
   }
