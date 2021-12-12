@@ -110,7 +110,8 @@ class EditableTextBlock extends StatelessWidget {
     }
     if (attrs.containsKey(Attribute.fact_check.key)) {
       final color1 = defaultStyles!.fact_check!.decoration!.gradient!.colors[0];
-      final color2 = stringToColor(Attribute.fact_check.value);
+      final color2 = stringToColor(
+          attrs[Attribute.fact_check.key]?.value ?? Attribute.fact_check.value);
       return defaultStyles.fact_check!.decoration!.copyWith(
         gradient: LinearGradient(colors: [color1, color2]),
       );
