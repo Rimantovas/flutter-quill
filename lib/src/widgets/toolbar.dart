@@ -181,6 +181,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             controller: controller,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showItalicButton)
           ToggleStyleButton(
@@ -189,6 +190,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             controller: controller,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showSmallButton)
           ToggleStyleButton(
@@ -197,6 +199,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             controller: controller,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showUnderLineButton)
           ToggleStyleButton(
@@ -205,6 +208,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             controller: controller,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showStrikeThrough)
           ToggleStyleButton(
@@ -213,6 +217,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             controller: controller,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showInlineCode)
           ToggleStyleButton(
@@ -221,6 +226,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             controller: controller,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showColorButton)
           ColorButton(
@@ -339,6 +345,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             icon: Icons.format_list_numbered,
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showListBullets)
           ToggleStyleButton(
@@ -347,6 +354,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             icon: Icons.format_list_bulleted,
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showListCheck)
           ToggleCheckListButton(
@@ -363,6 +371,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             icon: Icons.code,
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showDividers &&
             isButtonGroupShown[3] &&
@@ -379,6 +388,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             icon: Icons.format_quote,
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
+            fillColor: iconTheme?.gradient,
           ),
         if (showIndent)
           IndentButton(

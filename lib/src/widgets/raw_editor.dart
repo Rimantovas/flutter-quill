@@ -339,6 +339,8 @@ class RawEditorState extends EditorState
       return defaultStyles!.lists!.verticalSpacing;
     } else if (attrs.containsKey(Attribute.align.key)) {
       return defaultStyles!.align!.verticalSpacing;
+    } else if (attrs.containsKey(Attribute.fact_check.key)) {
+      return defaultStyles!.align!.verticalSpacing;
     }
     return const Tuple2(0, 0);
   }

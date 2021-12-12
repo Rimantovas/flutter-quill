@@ -10,7 +10,7 @@ typedef ToggleStyleButtonBuilder = Widget Function(
   BuildContext context,
   Attribute attribute,
   IconData icon,
-  Color? fillColor,
+  LinearGradient? fillColor,
   bool? isToggled,
   VoidCallback? onPressed, [
   double iconSize,
@@ -34,7 +34,7 @@ class ToggleStyleButton extends StatefulWidget {
   final IconData icon;
   final double iconSize;
 
-  final Color? fillColor;
+  final LinearGradient? fillColor;
 
   final QuillController controller;
 
@@ -115,7 +115,7 @@ Widget defaultToggleStyleButtonBuilder(
   BuildContext context,
   Attribute attribute,
   IconData icon,
-  Color? fillColor,
+  LinearGradient? fillColor,
   bool? isToggled,
   VoidCallback? onPressed, [
   double iconSize = kDefaultIconSize,
@@ -123,27 +123,44 @@ Widget defaultToggleStyleButtonBuilder(
 ]) {
   final theme = Theme.of(context);
   final isEnabled = onPressed != null;
-  final iconColor = isEnabled
-      ? isToggled == true
-          ? (iconTheme?.iconSelectedColor ??
-              theme
-                  .primaryIconTheme.color) //You can specify your own icon color
-          : (iconTheme?.iconUnselectedColor ?? theme.iconTheme.color)
-      : (iconTheme?.disabledIconColor ?? theme.disabledColor);
+  // final iconColor = isEnabled
+  //     ? isToggled == true
+  //         ? (iconTheme?.iconSelectedColor ??
+  //             theme
+  //                 .primaryIconTheme.color) //You can specify your own icon color
+  //         : (iconTheme?.iconUnselectedColor ?? theme.iconTheme.color)
+  //     : (iconTheme?.disabledIconColor ?? theme.disabledColor);
+
   final fill = isEnabled
       ? isToggled == true
-          ? (iconTheme?.iconSelectedFillColor ??
-              theme.toggleableActiveColor) //Selected icon fill color
-          : (iconTheme?.iconUnselectedFillColor ??
-              theme.canvasColor) //Unselected icon fill color :
-      : (iconTheme?.disabledIconFillColor ??
-          (fillColor ?? theme.canvasColor)); //Disabled icon fill color
+          ? fillColor //Selected icon fill color
+          : const LinearGradient(colors: [
+              Colors.transparent,
+              Colors.transparent
+            ]) //Unselected icon fill color :
+      : (const LinearGradient(colors: [
+          Colors.transparent,
+          Colors.transparent
+        ])); //Disabled icon fill color
+
   return QuillIconButton(
     highlightElevation: 0,
     hoverElevation: 0,
     size: iconSize * kIconButtonFactor,
-    icon: Icon(icon, size: iconSize, color: iconColor),
-    fillColor: fill,
+    icon: ShaderMask(
+      child: Icon(
+        icon,
+        size: iconSize,
+        color: Colors.white,
+      ),
+      shaderCallback: (bounds) {
+        final rect = Rect.fromLTRB(0, 0, iconSize, iconSize);
+        return (fill ??
+                const LinearGradient(
+                    colors: [Colors.transparent, Colors.transparent]))
+            .createShader(rect);
+      },
+    ),
     onPressed: onPressed,
   );
 }

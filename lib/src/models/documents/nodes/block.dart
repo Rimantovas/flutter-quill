@@ -13,6 +13,7 @@ import 'node.dart';
 /// - Text Alignment
 /// - Text Direction
 /// - Code Block
+/// - Fact check
 class Block extends Container<Line?> {
   /// Creates new unmounted [Block].
   @override

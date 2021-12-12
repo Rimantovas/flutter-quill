@@ -110,6 +110,7 @@ class Attribute<T> {
     Attribute.codeBlock.key,
     Attribute.blockQuote.key,
     Attribute.indent.key,
+    Attribute.fact_check.key,
   });
 
   static final Set<String> blockKeysExceptHeader = LinkedHashSet.of({
@@ -118,6 +119,7 @@ class Attribute<T> {
     Attribute.codeBlock.key,
     Attribute.blockQuote.key,
     Attribute.indent.key,
+    Attribute.fact_check.key,
   });
 
   static final Set<String> exclusiveBlockKeys = LinkedHashSet.of({
@@ -125,6 +127,7 @@ class Attribute<T> {
     Attribute.list.key,
     Attribute.codeBlock.key,
     Attribute.blockQuote.key,
+    Attribute.fact_check.key,
   });
 
   static Attribute<int?> get h1 => HeaderAttribute(level: 1);

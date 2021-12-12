@@ -107,6 +107,9 @@ class EditableTextBlock extends StatelessWidget {
     if (attrs.containsKey(Attribute.codeBlock.key)) {
       return defaultStyles!.code!.decoration;
     }
+    if (attrs.containsKey(Attribute.fact_check.key)) {
+      return defaultStyles!.fact_check!.decoration;
+    }
     return null;
   }
 
@@ -218,6 +221,9 @@ class EditableTextBlock extends StatelessWidget {
     if (attrs.containsKey(Attribute.blockQuote.key)) {
       return 16.0 + extraIndent;
     }
+    if (attrs.containsKey(Attribute.fact_check.key)) {
+      return 16.0 + extraIndent;
+    }
 
     var baseIndent = 0.0;
 
@@ -264,6 +270,8 @@ class EditableTextBlock extends StatelessWidget {
         lineSpacing = defaultStyles!.code!.lineSpacing;
       } else if (attrs.containsKey(Attribute.align.key)) {
         lineSpacing = defaultStyles!.align!.lineSpacing;
+      } else if (attrs.containsKey(Attribute.fact_check.key)) {
+        lineSpacing = defaultStyles!.fact_check!.lineSpacing;
       }
       top = lineSpacing.item1;
       bottom = lineSpacing.item2;
