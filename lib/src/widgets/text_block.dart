@@ -88,7 +88,7 @@ class EditableTextBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
 
-    final defaultStyles = styles ?? QuillStyles.getStyles(context, false);
+    final defaultStyles = QuillStyles.getStyles(context, false);
     return _EditableBlock(
         block,
         textDirection,
@@ -114,6 +114,9 @@ class EditableTextBlock extends StatelessWidget {
           attrs[Attribute.fact_check.key]?.value ?? Attribute.fact_check.value);
       return defaultStyles.fact_check!.decoration!.copyWith(
         gradient: LinearGradient(colors: [color1, color2]),
+        boxShadow: [
+          BoxShadow(color: color2, offset: const Offset(2, 0), spreadRadius: 1),
+        ],
       );
     }
     return null;
