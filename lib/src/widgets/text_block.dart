@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_quill/utils/color.dart';
 import 'package:tuple/tuple.dart';
 
 import '../models/documents/attribute.dart';
@@ -108,7 +109,11 @@ class EditableTextBlock extends StatelessWidget {
       return defaultStyles!.code!.decoration;
     }
     if (attrs.containsKey(Attribute.fact_check.key)) {
-      return defaultStyles!.fact_check!.decoration;
+      final color1 = defaultStyles!.fact_check!.decoration!.gradient!.colors[0];
+      final color2 = stringToColor(Attribute.fact_check.value);
+      return defaultStyles.fact_check!.decoration!.copyWith(
+        gradient: LinearGradient(colors: [color1, color2]),
+      );
     }
     return null;
   }

@@ -226,11 +226,11 @@ class QuillController extends ChangeNotifier {
     formatText(selection.start, selection.end - selection.start, attribute);
   }
 
-  void factCheck(int index) {
+  void factCheck(int index, String color) {
     formatText(
       index,
       index,
-      FactAttribute(),
+      FactAttribute(color),
     );
   }
 
