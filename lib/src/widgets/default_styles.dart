@@ -243,6 +243,7 @@ class DefaultStyles {
         h2: other.h2 ?? h2,
         h3: other.h3 ?? h3,
         paragraph: other.paragraph ?? paragraph,
+        fact_check: other.fact_check ?? fact_check,
         bold: other.bold ?? bold,
         italic: other.italic ?? italic,
         small: other.small ?? small,
