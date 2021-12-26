@@ -248,6 +248,7 @@ class QuillEditor extends StatefulWidget {
       this.linkActionPickerDelegate = defaultLinkActionPickerDelegate,
       this.customStyleBuilder,
       this.floatingCursorDisabled = false,
+      this.cursorStyle,
       Key? key});
 
   factory QuillEditor.basic({
@@ -288,6 +289,7 @@ class QuillEditor extends StatefulWidget {
   final Brightness keyboardAppearance;
   final ScrollPhysics? scrollPhysics;
   final ValueChanged<String>? onLaunchUrl;
+  final CursorStyle? cursorStyle;
   // Returns whether gesture is handled
   final bool Function(
       TapDownDetails details, TextPosition Function(Offset offset))? onTapDown;
@@ -409,15 +411,16 @@ class _QuillEditorState extends State<QuillEditor>
       showSelectionHandles: theme.platform == TargetPlatform.iOS ||
           theme.platform == TargetPlatform.android,
       showCursor: widget.showCursor,
-      cursorStyle: CursorStyle(
-        color: cursorColor,
-        backgroundColor: Colors.grey,
-        width: 2,
-        radius: cursorRadius,
-        offset: cursorOffset,
-        paintAboveText: widget.paintCursorAboveText ?? paintCursorAboveText,
-        opacityAnimates: cursorOpacityAnimates,
-      ),
+      cursorStyle: widget.cursorStyle ??
+          CursorStyle(
+            color: cursorColor,
+            backgroundColor: Colors.grey,
+            width: 2,
+            radius: cursorRadius,
+            offset: cursorOffset,
+            paintAboveText: widget.paintCursorAboveText ?? paintCursorAboveText,
+            opacityAnimates: cursorOpacityAnimates,
+          ),
       textCapitalization: widget.textCapitalization,
       minHeight: widget.minHeight,
       maxHeight: widget.maxHeight,
