@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
@@ -127,6 +129,7 @@ class RenderEmbedProxy extends RenderProxyBox implements RenderContentProxyBox {
 }
 
 class RichTextProxy extends SingleChildRenderObjectWidget {
+  /// Child argument should be an instance of RichText widget.
   const RichTextProxy(
     RichText child,
     this.textStyle,
@@ -291,8 +294,8 @@ class RenderParagraphProxy extends RenderProxyBox
       child!.getWordBoundary(position);
 
   @override
-  List<TextBox> getBoxesForSelection(TextSelection selection) =>
-      child!.getBoxesForSelection(selection);
+  List<TextBox> getBoxesForSelection(TextSelection selection) => child!
+      .getBoxesForSelection(selection, boxHeightStyle: BoxHeightStyle.strut);
 
   @override
   void performLayout() {

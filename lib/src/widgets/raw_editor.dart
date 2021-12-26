@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:tuple/tuple.dart';
 
+import '../../models/documents/nodes/node.dart';
 import '../models/documents/attribute.dart';
 import '../models/documents/document.dart';
 import '../models/documents/nodes/block.dart';
@@ -21,6 +22,8 @@ import 'cursor.dart';
 import 'default_styles.dart';
 import 'delegate.dart';
 import 'editor.dart';
+import 'keyboard_listener.dart';
+import 'link.dart';
 import 'proxy.dart';
 import 'quill_single_child_scroll_view.dart';
 import 'raw_editor/raw_editor_state_selection_delegate_mixin.dart';
@@ -30,40 +33,42 @@ import 'text_line.dart';
 import 'text_selection.dart';
 
 class RawEditor extends StatefulWidget {
-  const RawEditor({
-    required this.controller,
-    required this.focusNode,
-    required this.scrollController,
-    required this.scrollBottomInset,
-    required this.cursorStyle,
-    required this.selectionColor,
-    required this.selectionCtrls,
-    Key? key,
-    this.scrollable = true,
-    this.padding = EdgeInsets.zero,
-    this.readOnly = false,
-    this.placeholder,
-    this.onLaunchUrl,
-    this.toolbarOptions = const ToolbarOptions(
-      copy: true,
-      cut: true,
-      paste: true,
-      selectAll: true,
-    ),
-    this.showSelectionHandles = false,
-    bool? showCursor,
-    this.textCapitalization = TextCapitalization.none,
-    this.maxHeight,
-    this.minHeight,
-    this.customStyles,
-    this.expands = false,
-    this.autoFocus = false,
-    this.keyboardAppearance = Brightness.light,
-    this.enableInteractiveSelection = true,
-    this.scrollPhysics,
-    this.embedBuilder = defaultEmbedBuilder,
-    this.customStyleBuilder,
-  })  : assert(maxHeight == null || maxHeight > 0, 'maxHeight cannot be null'),
+  const RawEditor(
+      {required this.controller,
+      required this.focusNode,
+      required this.scrollController,
+      required this.scrollBottomInset,
+      required this.cursorStyle,
+      required this.selectionColor,
+      required this.selectionCtrls,
+      Key? key,
+      this.scrollable = true,
+      this.padding = EdgeInsets.zero,
+      this.readOnly = false,
+      this.placeholder,
+      this.onLaunchUrl,
+      this.toolbarOptions = const ToolbarOptions(
+        copy: true,
+        cut: true,
+        paste: true,
+        selectAll: true,
+      ),
+      this.showSelectionHandles = false,
+      bool? showCursor,
+      this.textCapitalization = TextCapitalization.none,
+      this.maxHeight,
+      this.minHeight,
+      this.customStyles,
+      this.expands = false,
+      this.autoFocus = false,
+      this.keyboardAppearance = Brightness.light,
+      this.enableInteractiveSelection = true,
+      this.scrollPhysics,
+      this.embedBuilder = defaultEmbedBuilder,
+      this.linkActionPickerDelegate = defaultLinkActionPickerDelegate,
+      this.customStyleBuilder,
+      this.floatingCursorDisabled = false})
+      : assert(maxHeight == null || maxHeight > 0, 'maxHeight cannot be null'),
         assert(minHeight == null || minHeight >= 0, 'minHeight cannot be null'),
         assert(maxHeight == null || minHeight == null || maxHeight >= minHeight,
             'maxHeight cannot be null'),
@@ -75,9 +80,25 @@ class RawEditor extends StatefulWidget {
   final bool scrollable;
   final double scrollBottomInset;
   final EdgeInsetsGeometry padding;
+
+  /// Whether the text can be changed.
+  ///
+  /// When this is set to true, the text cannot be modified
+  /// by any shortcut or keyboard operation. The text is still selectable.
+  ///
+  /// Defaults to false. Must not be null.
   final bool readOnly;
+
   final String? placeholder;
+
+  /// Callback which is triggered when the user wants to open a URL from
+  /// a link in the document.
   final ValueChanged<String>? onLaunchUrl;
+
+  /// Configuration of toolbar options.
+  ///
+  /// By default, all options are enabled. If [readOnly] is true,
+  /// paste and cut will be disabled regardless.
   final ToolbarOptions toolbarOptions;
   final bool showSelectionHandles;
   final bool showCursor;
@@ -94,7 +115,10 @@ class RawEditor extends StatefulWidget {
   final bool enableInteractiveSelection;
   final ScrollPhysics? scrollPhysics;
   final EmbedBuilder embedBuilder;
+  final LinkActionPickerDelegate linkActionPickerDelegate;
   final CustomStyleBuilder? customStyleBuilder;
+  final bool floatingCursorDisabled;
+
   @override
   State<StatefulWidget> createState() => RawEditorState();
 }
@@ -167,6 +191,7 @@ class RawEditorState extends EditorState
           onSelectionChanged: _handleSelectionChanged,
           scrollBottomInset: widget.scrollBottomInset,
           padding: widget.padding,
+          floatingCursorDisabled: widget.floatingCursorDisabled,
           children: _buildChildren(_doc, context),
         ),
       ),
@@ -196,6 +221,7 @@ class RawEditorState extends EditorState
               scrollBottomInset: widget.scrollBottomInset,
               padding: widget.padding,
               cursorController: _cursorCont,
+              floatingCursorDisabled: widget.floatingCursorDisabled,
               children: _buildChildren(_doc, context),
             ),
           ),
@@ -213,9 +239,11 @@ class RawEditorState extends EditorState
       data: _styles!,
       child: MouseRegion(
         cursor: SystemMouseCursors.text,
-        child: Container(
-          constraints: constraints,
-          child: child,
+        child: QuillKeyboardListener(
+          child: Container(
+            constraints: constraints,
+            child: child,
+          ),
         ),
       ),
     );
@@ -223,12 +251,25 @@ class RawEditorState extends EditorState
 
   void _handleSelectionChanged(
       TextSelection selection, SelectionChangedCause cause) {
+    final oldSelection = widget.controller.selection;
     widget.controller.updateSelection(selection, ChangeSource.LOCAL);
 
     _selectionOverlay?.handlesVisible = _shouldShowSelectionHandles();
 
     if (!_keyboardVisible) {
+      // This will show the keyboard for all selection changes on the
+      // editor, not just changes triggered by user gestures.
       requestKeyboard();
+    }
+
+    if (cause == SelectionChangedCause.drag) {
+      // When user updates the selection while dragging make sure to
+      // bring the updated position (base or extent) into view.
+      if (oldSelection.baseOffset != selection.baseOffset) {
+        bringIntoView(selection.base);
+      } else if (oldSelection.extentOffset != selection.extentOffset) {
+        bringIntoView(selection.extent);
+      }
     }
   }
 
@@ -236,11 +277,8 @@ class RawEditorState extends EditorState
   /// by changing its attribute according to [value].
   void _handleCheckboxTap(int offset, bool value) {
     if (!widget.readOnly) {
-      if (value) {
-        widget.controller.formatText(offset, 0, Attribute.checked);
-      } else {
-        widget.controller.formatText(offset, 0, Attribute.unchecked);
-      }
+      widget.controller.formatText(
+          offset, 0, value ? Attribute.checked : Attribute.unchecked);
     }
   }
 
@@ -255,6 +293,7 @@ class RawEditorState extends EditorState
         final attrs = node.style.attributes;
         final editableTextBlock = EditableTextBlock(
             block: node,
+            controller: widget.controller,
             textDirection: _textDirection,
             scrollBottomInset: widget.scrollBottomInset,
             verticalSpacing: _getVerticalSpacingForBlock(node, _styles),
@@ -267,6 +306,8 @@ class RawEditorState extends EditorState
                 ? const EdgeInsets.all(16)
                 : null,
             embedBuilder: widget.embedBuilder,
+            linkActionPicker: _linkActionPicker,
+            onLaunchUrl: widget.onLaunchUrl,
             cursorCont: _cursorCont,
             indentLevelCounts: indentLevelCounts,
             onCheckboxTap: _handleCheckboxTap,
@@ -289,6 +330,9 @@ class RawEditorState extends EditorState
       customStyleBuilder: widget.customStyleBuilder,
       styles: _styles!,
       readOnly: widget.readOnly,
+      controller: widget.controller,
+      linkActionPicker: _linkActionPicker,
+      onLaunchUrl: widget.onLaunchUrl,
     );
     final editableTextLine = EditableTextLine(
         node,
@@ -527,7 +571,7 @@ class RawEditorState extends EditorState
 
   void _updateOrDisposeSelectionOverlayIfNeeded() {
     if (_selectionOverlay != null) {
-      if (_hasFocus) {
+      if (_hasFocus && !textEditingValue.selection.isCollapsed) {
         _selectionOverlay!.update(textEditingValue);
       } else {
         _selectionOverlay!.dispose();
@@ -577,6 +621,11 @@ class RawEditorState extends EditorState
       // Inform the widget that the value of clipboardStatus has changed.
       // Trigger build and updateChildren
     });
+  }
+
+  Future<LinkMenuAction> _linkActionPicker(Node linkNode) async {
+    final link = linkNode.style.attributes[Attribute.link.key]!.value!;
+    return widget.linkActionPickerDelegate(context, link);
   }
 
   bool _showCaretOnScreenScheduled = false;
@@ -646,60 +695,6 @@ class RawEditorState extends EditorState
   @override
   void debugAssertLayoutUpToDate() {
     getRenderEditor()!.debugAssertLayoutUpToDate();
-  }
-
-  // set editing value from clipboard for mobile
-  Future<void> _setEditingValue(TextEditingValue value) async {
-    if (await _isItCut(value)) {
-      widget.controller.replaceText(
-        textEditingValue.selection.start,
-        textEditingValue.text.length - value.text.length,
-        '',
-        value.selection,
-      );
-    } else {
-      final value = textEditingValue;
-      final data = await Clipboard.getData(Clipboard.kTextPlain);
-      if (data != null) {
-        final length =
-            textEditingValue.selection.end - textEditingValue.selection.start;
-        var str = data.text!;
-        final codes = data.text!.codeUnits;
-        // For clip from editor, it may contain image, a.k.a 65532.
-        // For clip from browser, image is directly ignore.
-        // Here we skip image when pasting.
-        if (codes.contains(65532)) {
-          final sb = StringBuffer();
-          for (var i = 0; i < str.length; i++) {
-            if (str.codeUnitAt(i) == 65532) {
-              continue;
-            }
-            sb.write(str[i]);
-          }
-          str = sb.toString();
-        }
-        widget.controller.replaceText(
-          value.selection.start,
-          length,
-          str,
-          value.selection,
-        );
-        // move cursor to the end of pasted text selection
-        widget.controller.updateSelection(
-            TextSelection.collapsed(
-                offset: value.selection.start + data.text!.length),
-            ChangeSource.LOCAL);
-      }
-    }
-  }
-
-  Future<bool> _isItCut(TextEditingValue value) async {
-    final data = await Clipboard.getData(Clipboard.kTextPlain);
-    if (data == null) {
-      return false;
-    }
-    return textEditingValue.text.length - value.text.length ==
-        data.text!.length;
   }
 
   @override
@@ -814,6 +809,7 @@ class _Editor extends MultiChildRenderObjectWidget {
     required this.onSelectionChanged,
     required this.scrollBottomInset,
     required this.cursorController,
+    required this.floatingCursorDisabled,
     this.padding = EdgeInsets.zero,
     this.offset,
   }) : super(key: key, children: children);
@@ -829,23 +825,23 @@ class _Editor extends MultiChildRenderObjectWidget {
   final double scrollBottomInset;
   final EdgeInsetsGeometry padding;
   final CursorCont cursorController;
+  final bool floatingCursorDisabled;
 
   @override
   RenderEditor createRenderObject(BuildContext context) {
     return RenderEditor(
-        offset,
-        null,
-        textDirection,
-        scrollBottomInset,
-        padding,
-        document,
-        selection,
-        hasFocus,
-        onSelectionChanged,
-        startHandleLayerLink,
-        endHandleLayerLink,
-        const EdgeInsets.fromLTRB(4, 4, 4, 5),
-        cursorController);
+        offset: offset,
+        document: document,
+        textDirection: textDirection,
+        hasFocus: hasFocus,
+        selection: selection,
+        startHandleLayerLink: startHandleLayerLink,
+        endHandleLayerLink: endHandleLayerLink,
+        onSelectionChanged: onSelectionChanged,
+        cursorController: cursorController,
+        padding: padding,
+        scrollBottomInset: scrollBottomInset,
+        floatingCursorDisabled: floatingCursorDisabled);
   }
 
   @override
